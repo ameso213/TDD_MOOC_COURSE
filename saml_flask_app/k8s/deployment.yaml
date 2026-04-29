@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: saml-flask-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: saml-flask-app
+  template:
+    metadata:
+      labels:
+        app: saml-flask-app
+    spec:
+      containers:
+        - name: saml-flask-app
+          image: saml-flask-app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
