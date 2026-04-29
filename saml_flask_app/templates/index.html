@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Home — SAML Flask App{% endblock %}
+
+{% block content %}
+
+{% if errors %}
+  <div class="alert alert-error">
+    <strong>SAML Error:</strong> {{ errors | join(", ") }}
+    {% if error_reason %}<br><small>{{ error_reason }}</small>{% endif %}
+  </div>
+{% endif %}
+
+{% if msg %}
+  <div class="alert alert-success">{{ msg }}</div>
+{% endif %}
+
+<!-- Status Card -->
+<div class="card">
+  <h2>Authentication Status</h2>
+  {% if paint_logout %}
+    <div class="alert alert-success" style="margin-bottom:1rem;">
+      ✅ You are currently <strong>logged in</strong> via SAML SSO.
+    </div>
+    {% if attributes %}
+      <p style="margin-bottom:1rem; color:#555; font-size:0.9rem;">
+        Logged in as <strong>{{ attributes.get('email', [attributes.get('mail', ['unknown'])[0]])[0] }}</strong>
+      </p>
+    {% endif %}
+    <a href="/?slo" class="btn btn-danger">Logout (SLO)</a>
+    <a href="/attrs/" class="btn btn-secondary" style="margin-left:0.5rem;">View My Attributes</a>
+  {% else %}
+    <div class="alert alert-info" style="margin-bottom:1rem;">
+      🔒 You are <strong>not logged in</strong>. Use SSO to authenticate via your Identity Provider.
+    </div>
+    <a href="/?sso" class="btn btn-primary">Login with SSO</a>
+    <a href="/?sso2" class="btn btn-secondary" style="margin-left:0.5rem;">Login → Attributes Page</a>
+  {% endif %}
+</div>
+
+<!-- SAML Flow Explanation -->
+<div class="card">
+  <h2>How This SAML Flow Works</h2>
+  <table>
+    <tr><th>Step</th><th>URL</th><th>What Happens</th></tr>
+    <tr><td>1. SSO Init</td><td><code>/?sso</code></td><td>SP builds AuthNRequest → redirects to IdP</td></tr>
+    <tr><td>2. IdP Login</td><td><em>IdP side</em></td><td>User authenticates at the Identity Provider</td></tr>
+    <tr><td>3. ACS</td><td><code>/?acs</code></td><td>IdP POSTs SAMLResponse → SP validates &amp; creates session</td></tr>
+    <tr><td>4. SLO Init</td><td><code>/?slo</code></td><td>SP sends LogoutRequest to IdP</td></tr>
+    <tr><td>5. SLS</td><td><code>/?sls</code></td><td>IdP returns LogoutResponse → SP clears session</td></tr>
+    <tr><td>—</td><td><code>/metadata/</code></td><td>SP publishes XML metadata for IdP to consume</td></tr>
+  </table>
+</div>
+
+<!-- Quick Links -->
+<div class="card">
+  <h2>Endpoints</h2>
+  <table>
+    <tr>
+      <td><a href="/metadata/" class="btn btn-secondary">📄 SP Metadata XML</a></td>
+      <td style="color:#555; font-size:0.88rem;">Share this URL with your IdP admin to configure the SP</td>
+    </tr>
+    <tr>
+      <td><a href="/attrs/" class="btn btn-secondary">👤 User Attributes</a></td>
+      <td style="color:#555; font-size:0.88rem;">SAML attributes returned by the IdP after login</td>
+    </tr>
+  </table>
+</div>
+
+{% endblock %}

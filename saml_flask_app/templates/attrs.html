@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Attributes — SAML Flask App{% endblock %}
+
+{% block content %}
+
+<div class="card">
+  <h2>SAML User Attributes</h2>
+
+  {% if not paint_logout %}
+    <div class="alert alert-info">
+      You are not logged in. <a href="/?sso">Login with SSO</a> to see your attributes.
+    </div>
+  {% elif not attributes %}
+    <div class="alert alert-info">
+      Logged in, but the IdP returned no attributes.
+    </div>
+  {% else %}
+    <div class="alert alert-success" style="margin-bottom:1.5rem;">
+      ✅ Authenticated — attributes received from Identity Provider.
+    </div>
+    <table>
+      <thead>
+        <tr><th>Attribute Name</th><th>Value(s)</th></tr>
+      </thead>
+      <tbody>
+        {% for attr_name, attr_values in attributes.items() %}
+        <tr>
+          <td><code>{{ attr_name }}</code></td>
+          <td>
+            {% for val in attr_values %}
+              <span class="badge">{{ val }}</span>
+            {% endfor %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div style="margin-top:1.5rem;">
+      <a href="/" class="btn btn-secondary">← Back to Home</a>
+      <a href="/?slo" class="btn btn-danger" style="margin-left:0.5rem;">Logout</a>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

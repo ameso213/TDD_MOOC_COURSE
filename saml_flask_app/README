@@ -1,0 +1,84 @@
+# SAML Flask App
+
+A Flask web application with SAML 2.0 Single Sign-On (SSO) authentication.
+
+## Requirements
+
+- Python 3.8+
+- xmlsec1 (system dependency)
+
+```bash
+# Ubuntu/Debian
+sudo apt-get install xmlsec1
+
+# macOS
+brew install libxmlsec1
+```
+
+## Installation
+
+```bash
+git clone <your-repo-url>
+cd saml-flask-app
+
+python -m venv venv
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+## Configuration
+
+Update `saml/settings.json` with your Identity Provider (IdP) details before running the app.
+
+To generate SP certificates:
+
+```bash
+openssl req -x509 -newkey rsa:2048 -keyout saml/certs/sp.key \
+  -out saml/certs/sp.crt -days 365 -nodes
+```
+
+## Running
+
+```bash
+python run.py
+```
+
+App runs at `http://localhost:5000`
+
+## Testing
+
+```bash
+pytest tests/ -v
+```
+
+Tests use `unittest.mock` to simulate SAML authentication without a real IdP.
+
+## Project Structure
+
+```
+saml-flask-app/
+├── app/
+│   ├── __init__.py
+│   ├── utils.py
+│   └── views.py
+├── saml/
+│   ├── certs/
+│   │   ├── sp.crt
+│   │   └── sp.key
+│   ├── advanced_settings.json
+│   └── settings.json
+├── templates/
+│   ├── attrs.html
+│   ├── base.html
+│   └── index.html
+├── tests/
+│   └── test_saml.py
+├── conftest.py
+├── requirements.txt
+└── run.py
+```
+
+## License
+
+MIT
